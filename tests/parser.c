@@ -92,16 +92,39 @@ START_TEST(test_expr_mult_and_minus) {
 }
 END_TEST
 
+START_TEST(test_complex_with_parentheses) {
+  char input[] = "100*(4 + 4)";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+
+  ck_assert_uint_eq(expr(), 800);
+  fclose(buffer);
+}
+END_TEST
+
+START_TEST(test_complex_without_parentheses) {
+  char input[] = "100*4 + 4";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+
+  ck_assert_uint_eq(expr(), 404);
+  fclose(buffer);
+}
+END_TEST
+
 Suite *parser_suite(void) {
   Suite *suite;
   TCase *tc_factor;
   TCase *tc_expr;
+  TCase *tc_complex_expr;
 
   suite = suite_create("Parser");
   tc_factor = tcase_create("factor");
   tc_expr = tcase_create("expr");
+  tc_complex_expr = tcase_create("complex_expr");
 
   tcase_add_test(tc_factor, test_factor_integer);
+
   tcase_add_test(tc_expr, test_expr_only_factor);
   tcase_add_test(tc_expr, test_expr_sum);
   tcase_add_test(tc_expr, test_expr_minus);
@@ -111,8 +134,12 @@ Suite *parser_suite(void) {
   tcase_add_test(tc_expr, test_expr_div);
   tcase_add_test(tc_expr, test_expr_mult_and_minus);
 
+  tcase_add_test(tc_complex_expr, test_complex_with_parentheses);
+  tcase_add_test(tc_complex_expr, test_complex_without_parentheses);
+
   suite_add_tcase(suite, tc_factor);
   suite_add_tcase(suite, tc_expr);
+  suite_add_tcase(suite, tc_complex_expr);
 
   return suite;
 }

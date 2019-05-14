@@ -26,7 +26,7 @@ bool uint(void) {
   return false;
 }
 
-void ignore_spaces() {
+void ignore_spaces(void) {
   char c;
   while ((c = getc(stream)) && isspace(c)) {
   }
@@ -44,13 +44,23 @@ bool binary_op(void) {
   return false;
 }
 
+token is_valid_char(void) {
+  char c = getc(stream);
+  if (c == '(' || c == ')') {
+    lexeme[0] = '\0';
+    return c;
+  }
+  ungetc(c, stream);
+  return 0;
+}
+
 token get_next_token(void) {
   ignore_spaces();
   if (uint())
     return UINT;
   if (binary_op())
     return BINARY_OP;
-  return 0;
+  return is_valid_char();
 }
 
 void read_lexeme(char *dest) { strcpy(dest, lexeme); }
@@ -62,6 +72,7 @@ void read_lexeme(char *dest) { strcpy(dest, lexeme); }
 void match(token expected) {
   if (expected != lookeahead) {
     fprintf(stderr, "expected %d but found %d", expected, lookeahead);
+    exit(-1);
   }
   lookeahead = get_next_token();
 }

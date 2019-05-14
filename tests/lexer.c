@@ -132,6 +132,32 @@ START_TEST(test_uint_with_operator) {
 }
 END_TEST
 
+START_TEST(test_uint_with_parentheses) {
+  char lexeme[LEXEME_MAX_SIZE];
+
+  char input[] = "(1)";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+
+  ck_assert_int_eq(get_lookahead(), START_PARENTHESES);
+  read_lexeme(lexeme);
+  ck_assert_str_eq("", lexeme);
+  match(START_PARENTHESES);
+
+  ck_assert_int_eq(get_lookahead(), UINT);
+  read_lexeme(lexeme);
+  ck_assert_str_eq("1", lexeme);
+  match(UINT);
+
+  ck_assert_int_eq(get_lookahead(), END_PARENTHESES);
+  read_lexeme(lexeme);
+  ck_assert_str_eq("", lexeme);
+  match(END_PARENTHESES);
+
+  fclose(buffer);
+}
+END_TEST
+
 Suite *lexer_suite(void) {
   Suite *suite;
   TCase *tc_integers;
@@ -145,6 +171,8 @@ Suite *lexer_suite(void) {
 
   tcase_add_test(tc_integers, test_uint_consumer);
   tcase_add_test(tc_integers, test_not_recognized);
+  tcase_add_test(tc_integers, test_uint_with_parentheses);
+
   tcase_add_test(tc_spaces, test_space_beginning);
   tcase_add_test(tc_spaces, test_space_between);
   tcase_add_test(tc_spaces, test_space_end);

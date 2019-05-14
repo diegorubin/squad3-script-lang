@@ -3,8 +3,10 @@
 
 typedef int token;
 
-
 enum {
+  START_PARENTHESES = 40,
+  END_PARENTHESES,
+
   UINT = 255,
   BINARY_OP,
 };

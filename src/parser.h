@@ -2,7 +2,7 @@
  *
  * expr -> ['-'] factor { binary_op factor }
  * binary_op -> '+' | '-' | '*' | '/'
- * factor -> 'UINT'
+ * factor -> 'UINT' | '(' expr ')'
  *
  */
 
@@ -10,5 +10,7 @@
 
 #include "lexer.h"
 
-long long expr();
-long long factor();
+typedef long long integer;
+
+integer expr();
+integer factor();
