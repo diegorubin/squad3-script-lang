@@ -59,8 +59,12 @@ integer calculate_tree(NODE *node) {
   if (node->nodetype == OPERATOR) {
     if (!strcmp(node->value, "*"))
       return left * right;
+    if (!strcmp(node->value, "/"))
+      return left / right;
     if (!strcmp(node->value, "+"))
       return left + right;
+    if (!strcmp(node->value, "-"))
+      return left - right;
   }
 
   return atoll(node->value);
@@ -91,7 +95,7 @@ NODE *tree_put_operation(NODE *root, const char *operation, const char *value) {
   NODE *value_node = tree_node_init(INTEGER);
   tree_node_set_str(value_node, value);
 
-  if (!strcmp(operation, "*")) {
+  if (!strcmp(operation, "*") || !strcmp(operation, "/")) {
     NODE *old_right = most_right_node(root);
     NODE *old_right_parent = old_right->parent;
 

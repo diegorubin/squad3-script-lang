@@ -18,13 +18,6 @@ typedef enum {
   INTEGER,
 } node_t;
 
-typedef enum {
-  MINUS = 0,
-  PLUS,
-  MULT,
-  DIV,
-} op_precedence;
-
 typedef struct NODE {
   node_t nodetype;
   char value[LEXEME_MAX_SIZE];

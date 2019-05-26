@@ -131,6 +131,45 @@ START_TEST(test_print_arithmetic_tree_correct_order_with_sum) {
 }
 END_TEST
 
+START_TEST(test_print_arithmetic_tree_correct_order_with_minus) {
+  char result[1024];
+  strcpy(result, "\0");
+
+  NODE *root = tree_node_init(INTEGER);
+  tree_node_set_str(root, "4");
+  root = tree_put_operation(root, "*", "3");
+  root = tree_put_operation(root, "+", "10");
+  root = tree_put_operation(root, "/", "2");
+  root = tree_put_operation(root, "-", "7");
+
+  print_tree(root, result);
+  ck_assert_str_eq("4 * 3 + 10 / 2 - 7", result);
+  ck_assert_int_eq(10, calculate_tree(root));
+
+  tree_node_free(root);
+}
+END_TEST
+
+START_TEST(test_print_arithmetic_tree_correct_order_with_plus_sequence) {
+  char result[1024];
+  strcpy(result, "\0");
+
+  NODE *root = tree_node_init(INTEGER);
+  tree_node_set_str(root, "1");
+  root = tree_put_operation(root, "+", "5");
+  root = tree_put_operation(root, "*", "2");
+  root = tree_put_operation(root, "*", "10");
+  root = tree_put_operation(root, "/", "4");
+  root = tree_put_operation(root, "-", "25");
+
+  print_tree(root, result);
+  ck_assert_str_eq("1 + 5 * 2 * 10 / 4 - 25", result);
+  ck_assert_int_eq(-4, calculate_tree(root));
+
+  tree_node_free(root);
+}
+END_TEST
+
 Suite *tree_suite(void) {
   Suite *suite;
   TCase *tc_tree;
@@ -143,6 +182,9 @@ Suite *tree_suite(void) {
   tcase_add_test(tc_tree, test_print_arithmetic_tree_adjusted_mult);
   tcase_add_test(tc_tree, test_print_arithmetic_tree_correct_order);
   tcase_add_test(tc_tree, test_print_arithmetic_tree_correct_order_with_sum);
+  tcase_add_test(tc_tree, test_print_arithmetic_tree_correct_order_with_minus);
+  tcase_add_test(tc_tree,
+                 test_print_arithmetic_tree_correct_order_with_plus_sequence);
 
   suite = suite_create("Tree");
 

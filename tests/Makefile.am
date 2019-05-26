@@ -29,6 +29,7 @@ parser_CFLAGS = -I/usr/include \
 parser_LDADD = ${PARSER_LIBS} \
 							../src/lexer.o \
 							 ../src/parser.o \
+							 ../src/tree.o \
 							 -lcheck -lsubunit -lm -lrt -lpthread
 
 tree_CFLAGS = -I/usr/include \

@@ -1,29 +1,29 @@
 #include "parser.h"
 
 integer expr(void) {
+  char number[1024];
+
   integer expr_result = factor();
+  sprintf(number, "%lld", expr_result);
+
+  NODE *expr_root = tree_node_init(INTEGER);
+  tree_node_set_str(expr_root, number);
+
   while (get_lookahead() == BINARY_OP) {
     char lexeme[2];
     read_lexeme(lexeme);
     match(BINARY_OP);
 
     integer partial = factor();
-    switch (lexeme[0]) {
-    case '+':
-      expr_result += partial;
-      break;
-    case '-':
-      expr_result -= partial;
-      break;
-    case '*':
-      expr_result *= partial;
-      break;
-    case '/':
-      expr_result /= partial;
-    }
+    sprintf(number, "%lld", partial);
+
+    expr_root = tree_put_operation(expr_root, lexeme, number);
   }
 
-  return expr_result;
+  integer tree_result = calculate_tree(expr_root);
+  tree_node_free(expr_root);
+
+  return tree_result;
 }
 
 integer factor(void) {
