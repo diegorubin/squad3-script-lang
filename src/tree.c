@@ -70,9 +70,16 @@ void tree_node_set_str(NODE *node, const char *str) {
   strcpy(node->value, str);
 }
 
-NODE *more_left_node(NODE *root) {
+NODE *most_left_node(NODE *root) {
   if (root->left != NULL) {
-    return more_left_node(root->left);
+    return most_left_node(root->left);
+  }
+  return root;
+}
+
+NODE *most_right_node(NODE *root) {
+  if (root->right != NULL) {
+    return most_right_node(root->right);
   }
   return root;
 }
@@ -85,15 +92,15 @@ NODE *tree_put_operation(NODE *root, const char *operation, const char *value) {
   tree_node_set_str(value_node, value);
 
   if (!strcmp(operation, "*")) {
-    NODE *old_left = more_left_node(root);
-    NODE *old_left_parent = old_left->parent;
+    NODE *old_right = most_right_node(root);
+    NODE *old_right_parent = old_right->parent;
 
+    tree_add(operation_node, old_right, NODE_LEFT);
     tree_add(operation_node, value_node, NODE_RIGHT);
-    tree_add(operation_node, old_left, NODE_LEFT);
 
-    if (old_left_parent != NULL) {
-      operation_node->parent = old_left_parent;
-      old_left_parent->left = operation_node;
+    if (old_right_parent != NULL) {
+      operation_node->parent = old_right_parent;
+      old_right_parent->right = operation_node;
       return root;
     }
   } else {

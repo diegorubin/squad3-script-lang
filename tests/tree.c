@@ -106,7 +106,7 @@ START_TEST(test_print_arithmetic_tree_correct_order) {
   root = tree_put_operation(root, "*", "2");
 
   print_tree(root, result);
-  ck_assert_str_eq("1 * 2 + 1", result);
+  ck_assert_str_eq("1 + 1 * 2", result);
   ck_assert_int_eq(3, calculate_tree(root));
 
   tree_node_free(root);
@@ -124,7 +124,8 @@ START_TEST(test_print_arithmetic_tree_correct_order_with_sum) {
   root = tree_put_operation(root, "*", "4");
 
   print_tree(root, result);
-  ck_assert_str_eq("2 * 1 + 4 * 3", result);
+  ck_assert_str_eq("1 * 2 + 3 * 4", result);
+  ck_assert_int_eq(14, calculate_tree(root));
 
   tree_node_free(root);
 }
@@ -141,7 +142,7 @@ Suite *tree_suite(void) {
   tcase_add_test(tc_tree, test_print_arithmetic_tree_adjusted);
   tcase_add_test(tc_tree, test_print_arithmetic_tree_adjusted_mult);
   tcase_add_test(tc_tree, test_print_arithmetic_tree_correct_order);
-  // tcase_add_test(tc_tree, test_print_arithmetic_tree_correct_order_with_sum);
+  tcase_add_test(tc_tree, test_print_arithmetic_tree_correct_order_with_sum);
 
   suite = suite_create("Tree");
 
