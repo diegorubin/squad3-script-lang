@@ -9,6 +9,7 @@ enum {
 
   UINT = 255,
   BINARY_OP,
+  FLOAT
 };
 
 #endif /*__TOKENS_H__*/

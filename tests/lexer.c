@@ -158,6 +158,21 @@ START_TEST(test_uint_with_parentheses) {
 }
 END_TEST
 
+START_TEST(test_float_consumer) {
+  char lexeme[LEXEME_MAX_SIZE];
+
+  char input[] = "1.0";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+
+  ck_assert_int_eq(get_lookahead(), FLOAT);
+  read_lexeme(lexeme);
+  ck_assert_str_eq("1.0", lexeme);
+
+  fclose(buffer);
+}
+END_TEST
+
 Suite *lexer_suite(void) {
   Suite *suite;
   TCase *tc_integers;
@@ -182,6 +197,8 @@ Suite *lexer_suite(void) {
   tcase_add_test(tc_binary, test_if_is_multiplication);
   tcase_add_test(tc_binary, test_if_is_division);
   tcase_add_test(tc_binary, test_uint_with_operator);
+
+  tcase_add_test(tc_integers, test_float_consumer);
 
   suite_add_tcase(suite, tc_integers);
   suite_add_tcase(suite, tc_spaces);

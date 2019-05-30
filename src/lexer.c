@@ -3,27 +3,52 @@
 FILE *stream;
 token lookeahead;
 char lexeme[LEXEME_MAX_SIZE];
+int position;
+
+
+void read_digits() {
+
+  char c = 0;
+
+  while ((c = getc(stream)) && isdigit(c)) {
+    lexeme[position++] = c;
+  }
+  ungetc(c, stream);
+}
 
 /**
  * Funcoes privadas.
  * Essas funcoes serao utilizadas para
  * reconhecer tokens.
  */
-bool read_uint(void) {
+token read_number(void) {
   char c = getc(stream);
-  int position = 0;
-
+  position = 0;
+  
   if (isdigit(c)) {
     lexeme[position++] = c;
-    while ((c = getc(stream)) && isdigit(c)) {
+    read_digits();
+
+    c = getc(stream);
+    if (c == '.') {
       lexeme[position++] = c;
+
+      read_digits();
+
+      lexeme[position] = '\0';
+      ungetc(c, stream);
+      
+      return FLOAT;
     }
+
+
+
     lexeme[position] = '\0';
     ungetc(c, stream);
-    return true;
+    return UINT;
   }
   ungetc(c, stream);
-  return false;
+  return 0;
 }
 
 void ignore_spaces(void) {
@@ -56,8 +81,9 @@ token is_valid_char(void) {
 
 token get_next_token(void) {
   ignore_spaces();
-  if (read_uint())
-    return UINT;
+  token kind;
+  if (kind = read_number())
+    return kind;
   if (binary_op())
     return BINARY_OP;
   return is_valid_char();
