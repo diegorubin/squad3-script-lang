@@ -5,7 +5,6 @@ token lookeahead;
 char lexeme[LEXEME_MAX_SIZE];
 int position;
 
-
 void read_digits() {
 
   char c = 0;
@@ -33,16 +32,17 @@ token read_number(void) {
     if (c == '.') {
       lexeme[position++] = c;
 
-      read_digits();
+      if((c = getc(stream)) && isdigit(c)) {
+        ungetc(c, stream);
+        read_digits();
 
-      lexeme[position] = '\0';
-      ungetc(c, stream);
-      
-      return FLOAT;
+        lexeme[position] = '\0';
+        ungetc(c, stream);
+        
+        return FLOAT;
+      }
+      position--;
     }
-
-
-
     lexeme[position] = '\0';
     ungetc(c, stream);
     return UINT;

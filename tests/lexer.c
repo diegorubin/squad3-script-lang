@@ -173,20 +173,53 @@ START_TEST(test_float_consumer) {
 }
 END_TEST
 
+START_TEST(test_float_consumer_number_dot_number_dot_number) {
+  char lexeme[LEXEME_MAX_SIZE];
+
+  char input[] = "2.0.0";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+
+  ck_assert_int_eq(get_lookahead(), FLOAT);
+  read_lexeme(lexeme);
+  ck_assert_str_eq("2.0", lexeme);
+
+  fclose(buffer);
+}
+END_TEST
+
+START_TEST(test_uint_with_dot) {
+  char lexeme[LEXEME_MAX_SIZE];
+
+  char input[] = "1.a";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+
+  ck_assert_int_eq(get_lookahead(), UINT);
+  read_lexeme(lexeme);
+  ck_assert_str_eq("1", lexeme);
+
+  fclose(buffer);
+}
+END_TEST
+
 Suite *lexer_suite(void) {
   Suite *suite;
   TCase *tc_integers;
   TCase *tc_spaces;
   TCase *tc_binary;
+  TCase *tc_floats;
 
   suite = suite_create("Lexer");
   tc_integers = tcase_create("Integer");
   tc_spaces = tcase_create("Spaces");
   tc_binary = tcase_create("Binary");
+  tc_floats = tcase_create("Floats");
 
   tcase_add_test(tc_integers, test_uint_consumer);
   tcase_add_test(tc_integers, test_not_recognized);
   tcase_add_test(tc_integers, test_uint_with_parentheses);
+  tcase_add_test(tc_integers, test_uint_with_dot);
 
   tcase_add_test(tc_spaces, test_space_beginning);
   tcase_add_test(tc_spaces, test_space_between);
@@ -198,11 +231,13 @@ Suite *lexer_suite(void) {
   tcase_add_test(tc_binary, test_if_is_division);
   tcase_add_test(tc_binary, test_uint_with_operator);
 
-  tcase_add_test(tc_integers, test_float_consumer);
+  tcase_add_test(tc_floats, test_float_consumer);
+  tcase_add_test(tc_floats, test_float_consumer_number_dot_number_dot_number);
 
   suite_add_tcase(suite, tc_integers);
   suite_add_tcase(suite, tc_spaces);
   suite_add_tcase(suite, tc_binary);
+  suite_add_tcase(suite, tc_floats);
 
   return suite;
 }
