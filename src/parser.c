@@ -1,18 +1,37 @@
 #include "parser.h"
 
+/**
+ * private functions
+ */
+bool is_binary_op(token value) {
+  return (value == '+' || value == '-' || value == '*' || value == '/');
+}
+
+/**
+ * public functions
+ */
 SQD3_OBJECT *expr(void) {
   char number[1024];
+  bool invert_factor = false;
+
+  if (get_lookahead() == '-') {
+    match('-');
+    invert_factor = true;
+  }
 
   SQD3_OBJECT *expr_result = factor();
+  if (invert_factor) {
+    invert_number_value(expr_result);
+  }
   sprintf(number, "%lld", read_integer_from_object(expr_result));
 
   NODE *expr_root = tree_node_init(INTEGER);
   tree_node_set_str(expr_root, number);
 
-  while (get_lookahead() == BINARY_OP) {
+  while (is_binary_op(get_lookahead())) {
     char lexeme[2];
     read_lexeme(lexeme);
-    match(BINARY_OP);
+    match(get_lookahead());
 
     SQD3_OBJECT *partial = factor();
     sprintf(number, "%lld", read_integer_from_object(partial));

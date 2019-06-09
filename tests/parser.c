@@ -125,6 +125,16 @@ START_TEST(test_complex_without_parentheses) {
 }
 END_TEST
 
+START_TEST(test_negative_expression) {
+  char input[] = "- 10";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+
+  ck_assert_uint_eq(expr(), -10);
+  fclose(buffer);
+}
+END_TEST
+
 Suite *parser_suite(void) {
   Suite *suite;
   TCase *tc_factor;
@@ -146,6 +156,7 @@ Suite *parser_suite(void) {
   tcase_add_test(tc_expr, test_expr_mult);
   tcase_add_test(tc_expr, test_expr_div);
   tcase_add_test(tc_expr, test_expr_mult_and_minus);
+  tcase_add_test(tc_expr, test_negative_expression);
 
   tcase_add_test(tc_complex_expr, test_complex_with_parentheses);
   tcase_add_test(tc_complex_expr, test_complex_without_parentheses);

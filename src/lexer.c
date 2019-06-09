@@ -23,7 +23,7 @@ void read_digits() {
 token read_number(void) {
   char c = getc(stream);
   position = 0;
-  
+
   if (isdigit(c)) {
     lexeme[position++] = c;
     read_digits();
@@ -32,13 +32,13 @@ token read_number(void) {
     if (c == '.') {
       lexeme[position++] = c;
 
-      if((c = getc(stream)) && isdigit(c)) {
+      if ((c = getc(stream)) && isdigit(c)) {
         ungetc(c, stream);
         read_digits();
 
         lexeme[position] = '\0';
         ungetc(c, stream);
-        
+
         return FLOAT;
       }
       position--;
@@ -58,21 +58,11 @@ void ignore_spaces(void) {
   ungetc(c, stream);
 }
 
-bool binary_op(void) {
-  char c = getc(stream);
-  if (c == '+' || c == '-' || c == '*' || c == '/') {
-    lexeme[0] = c;
-    lexeme[1] = '\0';
-    return true;
-  }
-  ungetc(c, stream);
-  return false;
-}
-
 token is_valid_char(void) {
   char c = getc(stream);
-  if (c == '(' || c == ')') {
-    lexeme[0] = '\0';
+  if (c == '(' || c == ')' || c == '+' || c == '-' || c == '*' || c == '/') {
+    lexeme[0] = c;
+    lexeme[1] = '\0';
     return c;
   }
   ungetc(c, stream);
@@ -82,10 +72,8 @@ token is_valid_char(void) {
 token get_next_token(void) {
   ignore_spaces();
   token kind;
-  if (kind = read_number())
+  if ((kind = read_number()))
     return kind;
-  if (binary_op())
-    return BINARY_OP;
   return is_valid_char();
 }
 
@@ -103,7 +91,7 @@ void match(token expected) {
   lookeahead = get_next_token();
 }
 
-int get_lookahead(void) { return lookeahead; }
+token get_lookahead(void) { return lookeahead; }
 
 void init_lexer(FILE *input) {
   stream = input;

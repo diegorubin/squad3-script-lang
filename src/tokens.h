@@ -8,7 +8,6 @@ enum {
   END_PARENTHESES,
 
   UINT = 255,
-  BINARY_OP,
   FLOAT
 };
 

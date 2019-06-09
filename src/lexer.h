@@ -14,7 +14,7 @@
 void init_lexer(FILE *input);
 
 // Essas funcoes serao utilizadas no parser
-int get_lookahead(void);
+token get_lookahead(void);
 void match(int expected);
 void read_lexeme(char *dest);
 

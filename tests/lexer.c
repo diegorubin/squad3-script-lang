@@ -71,7 +71,7 @@ START_TEST(test_if_is_plus) {
   FILE *buffer = fmemopen(input, strlen(input), "r");
   init_lexer(buffer);
 
-  ck_assert_int_eq(get_lookahead(), BINARY_OP);
+  ck_assert_int_eq(get_lookahead(), '+');
   fclose(buffer);
 }
 END_TEST
@@ -81,7 +81,7 @@ START_TEST(test_if_is_minus) {
   FILE *buffer = fmemopen(input, strlen(input), "r");
   init_lexer(buffer);
 
-  ck_assert_int_eq(get_lookahead(), BINARY_OP);
+  ck_assert_int_eq(get_lookahead(), '-');
   fclose(buffer);
 }
 END_TEST
@@ -91,7 +91,7 @@ START_TEST(test_if_is_multiplication) {
   FILE *buffer = fmemopen(input, strlen(input), "r");
   init_lexer(buffer);
 
-  ck_assert_int_eq(get_lookahead(), BINARY_OP);
+  ck_assert_int_eq(get_lookahead(), '*');
   fclose(buffer);
 }
 END_TEST
@@ -101,7 +101,7 @@ START_TEST(test_if_is_division) {
   FILE *buffer = fmemopen(input, strlen(input), "r");
   init_lexer(buffer);
 
-  ck_assert_int_eq(get_lookahead(), BINARY_OP);
+  ck_assert_int_eq(get_lookahead(), '/');
   fclose(buffer);
 }
 END_TEST
@@ -118,10 +118,10 @@ START_TEST(test_uint_with_operator) {
   ck_assert_str_eq("1", lexeme);
   match(UINT);
 
-  ck_assert_int_eq(get_lookahead(), BINARY_OP);
+  ck_assert_int_eq(get_lookahead(), '*');
   read_lexeme(lexeme);
   ck_assert_str_eq("*", lexeme);
-  match(BINARY_OP);
+  match('*');
 
   ck_assert_int_eq(get_lookahead(), UINT);
   read_lexeme(lexeme);
@@ -141,7 +141,7 @@ START_TEST(test_uint_with_parentheses) {
 
   ck_assert_int_eq(get_lookahead(), START_PARENTHESES);
   read_lexeme(lexeme);
-  ck_assert_str_eq("", lexeme);
+  ck_assert_str_eq("(", lexeme);
   match(START_PARENTHESES);
 
   ck_assert_int_eq(get_lookahead(), UINT);
@@ -151,7 +151,7 @@ START_TEST(test_uint_with_parentheses) {
 
   ck_assert_int_eq(get_lookahead(), END_PARENTHESES);
   read_lexeme(lexeme);
-  ck_assert_str_eq("", lexeme);
+  ck_assert_str_eq(")", lexeme);
   match(END_PARENTHESES);
 
   fclose(buffer);
