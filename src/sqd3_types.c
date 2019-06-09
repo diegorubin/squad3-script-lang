@@ -35,6 +35,10 @@ SQD3_OBJECT *execute_operator_minus(SQD3_OBJECT *left, SQD3_OBJECT *right) {
                                 read_integer_from_object(right));
 }
 
+void invert_number_value(SQD3_OBJECT *object) {
+  *((integer *)object->value) = *((integer *)object->value) * -1;
+}
+
 void free_object(SQD3_OBJECT *object) {
   free(object->value);
   free(object);

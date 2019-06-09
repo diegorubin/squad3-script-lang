@@ -3,9 +3,9 @@
 
 /** SQD3 EBNF
  *
- * expr -> ['-'] factor { binary_op factor }
+ * expr -> factor { binary_op factor }
  * binary_op -> '+' | '-' | '*' | '/'
- * factor -> 'UINT'  | '(' expr ')'
+ * factor -> ['-'] ( 'UINT' | '(' expr ')' )
  *
  */
 

@@ -62,6 +62,16 @@ START_TEST(test_multi_integers) {
 }
 END_TEST
 
+START_TEST(test_invert_number_value) {
+  SQD3_OBJECT *a = integer_from_long_long(10);
+  invert_number_value(a);
+
+  ck_assert_int_eq(read_integer_from_object(a), -10);
+
+  free_object(a);
+}
+END_TEST
+
 Suite *parser_suite(void) {
   Suite *suite;
   TCase *tc_integer;
@@ -75,6 +85,7 @@ Suite *parser_suite(void) {
   tcase_add_test(tc_integer, test_minus_integers);
   tcase_add_test(tc_integer, test_multi_integers);
   tcase_add_test(tc_integer, test_division_integers);
+  tcase_add_test(tc_integer, test_invert_number_value);
 
   suite_add_tcase(suite, tc_integer);
 
