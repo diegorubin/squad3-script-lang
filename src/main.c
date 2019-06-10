@@ -12,7 +12,9 @@ int main() {
 
     FILE *buffer = fmemopen(input, strlen(input), "r");
     init_lexer(buffer);
-    printf("%lld \n", expr());
+    SQD3_OBJECT *result = expr();
+    printf("%lld \n", read_integer_from_object(result));
+    free_object(result);
   }
   return 0;
 }
