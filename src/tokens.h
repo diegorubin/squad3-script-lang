@@ -8,7 +8,8 @@ enum {
   END_PARENTHESES,
 
   UINT = 255,
-  FLOAT
+  FLOAT,
+  ID
 };
 
 #endif /*__TOKENS_H__*/

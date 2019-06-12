@@ -17,16 +17,6 @@ START_TEST(test_uint_consumer) {
 }
 END_TEST
 
-START_TEST(test_not_recognized) {
-  char input[] = "test";
-  FILE *buffer = fmemopen(input, strlen(input), "r");
-  init_lexer(buffer);
-
-  ck_assert_int_eq(get_lookahead(), 0);
-  fclose(buffer);
-}
-END_TEST
-
 START_TEST(test_space_beginning) {
   char lexeme[LEXEME_MAX_SIZE];
 
@@ -203,21 +193,67 @@ START_TEST(test_uint_with_dot) {
 }
 END_TEST
 
+START_TEST(test_id_consumer) {
+  char lexeme[LEXEME_MAX_SIZE];
+
+  char input[] = "variable";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+
+  ck_assert_int_eq(get_lookahead(), ID);
+  read_lexeme(lexeme);
+  ck_assert_str_eq("variable", lexeme);
+
+  fclose(buffer);
+}
+END_TEST
+
+START_TEST(test_id_with_number_consumer) {
+  char lexeme[LEXEME_MAX_SIZE];
+
+  char input[] = "x9";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+
+  ck_assert_int_eq(get_lookahead(), ID);
+  read_lexeme(lexeme);
+  ck_assert_str_eq("x9", lexeme);
+
+  fclose(buffer);
+}
+END_TEST
+
+START_TEST(test_id_with_underscore_consumer) {
+  char lexeme[LEXEME_MAX_SIZE];
+
+  char input[] = "a_value";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+
+  ck_assert_int_eq(get_lookahead(), ID);
+  read_lexeme(lexeme);
+  ck_assert_str_eq("a_value", lexeme);
+
+  fclose(buffer);
+}
+END_TEST
+
 Suite *lexer_suite(void) {
   Suite *suite;
   TCase *tc_integers;
   TCase *tc_spaces;
   TCase *tc_binary;
   TCase *tc_floats;
+  TCase *tc_ids;
 
   suite = suite_create("Lexer");
   tc_integers = tcase_create("Integer");
   tc_spaces = tcase_create("Spaces");
   tc_binary = tcase_create("Binary");
   tc_floats = tcase_create("Floats");
+  tc_ids = tcase_create("Identifiers");
 
   tcase_add_test(tc_integers, test_uint_consumer);
-  tcase_add_test(tc_integers, test_not_recognized);
   tcase_add_test(tc_integers, test_uint_with_parentheses);
   tcase_add_test(tc_integers, test_uint_with_dot);
 
@@ -234,10 +270,15 @@ Suite *lexer_suite(void) {
   tcase_add_test(tc_floats, test_float_consumer);
   tcase_add_test(tc_floats, test_float_consumer_number_dot_number_dot_number);
 
+  tcase_add_test(tc_ids, test_id_consumer);
+  tcase_add_test(tc_ids, test_id_with_number_consumer);
+  tcase_add_test(tc_ids, test_id_with_underscore_consumer);
+
   suite_add_tcase(suite, tc_integers);
   suite_add_tcase(suite, tc_spaces);
   suite_add_tcase(suite, tc_binary);
   suite_add_tcase(suite, tc_floats);
+  suite_add_tcase(suite, tc_ids);
 
   return suite;
 }

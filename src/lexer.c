@@ -51,6 +51,22 @@ token read_number(void) {
   return 0;
 }
 
+bool id(void) {
+  char c;
+  c = getc(stream);
+  if (isalpha(c)) {
+    position = 0;
+    lexeme[position++] = c;
+    while ((c = getc(stream)) && (isdigit(c) || isalpha(c) || c == '_')) {
+      lexeme[position++] = c;
+    }
+    lexeme[position] = '\0';
+    return true;
+  }
+  ungetc(c, stream);
+  return false;
+}
+
 void ignore_spaces(void) {
   char c;
   while ((c = getc(stream)) && isspace(c)) {
@@ -74,6 +90,8 @@ token get_next_token(void) {
   token kind;
   if ((kind = read_number()))
     return kind;
+  if (id())
+    return ID;
   return is_valid_char();
 }
 

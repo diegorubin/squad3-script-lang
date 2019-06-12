@@ -5,7 +5,7 @@
  *
  * expr -> factor { binary_op factor }
  * binary_op -> '+' | '-' | '*' | '/'
- * factor -> ['-'] ( 'UINT' | '(' expr ')' )
+ * factor -> ['-'] ( 'UINT' | '(' expr ')' | 'ID' )
  *
  */
 
