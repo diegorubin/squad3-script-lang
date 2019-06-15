@@ -59,10 +59,16 @@ SQD3_OBJECT *factor(void) {
 
   char lexeme[LEXEME_MAX_SIZE];
   read_lexeme(lexeme);
-  match(UINT);
 
-  if (invert_factor) {
-    return integer_from_long_long(atoll(lexeme) * -1);
+  if (get_lookahead() == UINT) {
+    match(UINT);
+
+    if (invert_factor) {
+      return integer_from_long_long(atoll(lexeme) * -1);
+    }
+    return integer_from_long_long(atoll(lexeme));
   }
-  return integer_from_long_long(atoll(lexeme));
+
+  match(ID);
+  return integer_from_long_long(0);
 }

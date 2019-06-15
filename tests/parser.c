@@ -155,6 +155,16 @@ START_TEST(test_negative_with_parentheses) {
 }
 END_TEST
 
+START_TEST(test_factor_id) {
+  char input[] = "10 + x";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+
+  ck_assert_int_eq(read_integer_from_object(expr()), 10);
+  fclose(buffer);
+}
+END_TEST
+
 Suite *parser_suite(void) {
   Suite *suite;
   TCase *tc_factor;
@@ -167,6 +177,7 @@ Suite *parser_suite(void) {
   tc_complex_expr = tcase_create("complex_expr");
 
   tcase_add_test(tc_factor, test_factor_integer);
+  tcase_add_test(tc_factor, test_factor_id);
 
   tcase_add_test(tc_expr, test_expr_only_factor);
   tcase_add_test(tc_expr, test_expr_sum);
