@@ -2,7 +2,6 @@
 #include "../src/sqd3_types.h"
 
 #include <check.h>
-#include <stdio.h>
 
 START_TEST(test_factor_integer) {
   char input[] = "1234";
@@ -158,9 +157,38 @@ END_TEST
 START_TEST(test_factor_id) {
   char input[] = "10 + x";
   FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_vtable();
   init_lexer(buffer);
 
+  SQD3_OBJECT *x = integer_from_long_long(5);
+  declare_local_variable("x", x);
+
+  ck_assert_int_eq(read_integer_from_object(expr()), 15);
+  fclose(buffer);
+}
+END_TEST
+
+START_TEST(test_assign_variable) {
+  char input[] = "x = 10";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+  init_vtable();
+
   ck_assert_int_eq(read_integer_from_object(expr()), 10);
+  fclose(buffer);
+}
+END_TEST
+
+START_TEST(test_assign_expression_result) {
+  char input[] = "x = (10 + 20 * 5)";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+  init_vtable();
+
+  ck_assert_int_eq(read_integer_from_object(expr()), 110);
+  VTABLE_ENTRY *entry = recover_variable("x");
+  ck_assert_int_eq(read_integer_from_object(entry->ref), 110);
+
   fclose(buffer);
 }
 END_TEST
@@ -170,11 +198,13 @@ Suite *parser_suite(void) {
   TCase *tc_factor;
   TCase *tc_expr;
   TCase *tc_complex_expr;
+  TCase *tc_assgn_expr;
 
   suite = suite_create("Parser");
   tc_factor = tcase_create("factor");
   tc_expr = tcase_create("expr");
   tc_complex_expr = tcase_create("complex_expr");
+  tc_assgn_expr = tcase_create("assgn_expr");
 
   tcase_add_test(tc_factor, test_factor_integer);
   tcase_add_test(tc_factor, test_factor_id);
@@ -194,9 +224,13 @@ Suite *parser_suite(void) {
   tcase_add_test(tc_complex_expr, test_complex_with_parentheses);
   tcase_add_test(tc_complex_expr, test_complex_without_parentheses);
 
+  tcase_add_test(tc_assgn_expr, test_assign_variable);
+  tcase_add_test(tc_assgn_expr, test_assign_expression_result);
+
   suite_add_tcase(suite, tc_factor);
   suite_add_tcase(suite, tc_expr);
   suite_add_tcase(suite, tc_complex_expr);
+  suite_add_tcase(suite, tc_assgn_expr);
 
   return suite;
 }

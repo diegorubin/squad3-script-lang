@@ -2,11 +2,9 @@
 #define __PARSER_H__
 
 /** SQD3 EBNF
- *
  * expr -> factor { binary_op factor }
- * binary_op -> '+' | '-' | '*' | '/'
+ * binary_op -> '+' | '-' | '*' | '/' | '='
  * factor -> ['-'] ( 'UINT' | 'ID' | '(' expr ')' )
- *
  */
 
 #include <stdlib.h>

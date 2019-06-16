@@ -1,12 +1,12 @@
 #ifndef __VTABLE_H__
 #define __VTABLE_H__
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "consts.h"
 #include "sqd3_types.h"
-
-typedef char varname_t[100];
 
 typedef enum {
   NEW_CONTEXT,
@@ -23,7 +23,12 @@ typedef struct VTABLE_ENTRY {
 
 void init_vtable(void);
 void init_context(varname_t context_name);
-void declare_local_variable(varname_t varname, SQD3_OBJECT *value);
+VTABLE_ENTRY *declare_local_variable(varname_t varname, SQD3_OBJECT *value);
 void dispose_local_variables();
+
+SQD3_OBJECT *execute_operator_assign(SQD3_OBJECT *left, SQD3_OBJECT *right);
+
+VTABLE_ENTRY *recover_variable(varname_t varname);
+integer read_integer_from_ref(SQD3_OBJECT *object);
 
 #endif

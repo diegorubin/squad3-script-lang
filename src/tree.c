@@ -35,15 +35,15 @@ void print_tree(NODE *node, char *str) {
   }
 
   if (node->nodetype == OPERATOR) {
-    sprintf(str, "%s %s ", str, node->value);
+    sprintf(str, "%s %s ", str, node->op);
   }
 
   if (node->right != NULL) {
     print_tree(node->right, str);
   }
 
-  if (node->nodetype == INTEGER) {
-    sprintf(str, "%s%s", str, node->value);
+  if (node->nodetype == VALUE) {
+    sprintf(str, "%s%llu", str, read_integer_from_object(node->value));
   }
 }
 
@@ -57,22 +57,26 @@ SQD3_OBJECT *calculate_tree(NODE *node) {
     right = calculate_tree(node->right);
 
   if (node->nodetype == OPERATOR) {
-    if (!strcmp(node->value, "*"))
+    if (!strcmp(node->op, "*"))
       return execute_operator_multi(left, right);
-    if (!strcmp(node->value, "/"))
+    if (!strcmp(node->op, "/"))
       return execute_operator_division(left, right);
-    if (!strcmp(node->value, "+"))
+    if (!strcmp(node->op, "+"))
       return execute_operator_plus(left, right);
-    if (!strcmp(node->value, "-"))
+    if (!strcmp(node->op, "-"))
       return execute_operator_minus(left, right);
+    if (!strcmp(node->op, "="))
+      return execute_operator_assign(left, right);
   }
 
-  return integer_from_long_long(atoll(node->value));
+  return node->value;
 }
 
-void tree_node_set_str(NODE *node, const char *str) {
-  strcpy(node->value, str);
+void tree_node_set_value(NODE *node, SQD3_OBJECT *value) {
+  node->value = value;
 }
+
+void tree_node_set_op(NODE *node, operator_t op) { strcpy(node->op, op); }
 
 NODE *most_left_node(NODE *root) {
   if (root->left != NULL) {
@@ -88,12 +92,12 @@ NODE *most_right_node(NODE *root) {
   return root;
 }
 
-NODE *tree_put_operation(NODE *root, const char *operation, const char *value) {
+NODE *tree_put_operation(NODE *root, operator_t operation, SQD3_OBJECT *value) {
   NODE *operation_node = tree_node_init(OPERATOR);
-  tree_node_set_str(operation_node, operation);
+  tree_node_set_op(operation_node, operation);
 
-  NODE *value_node = tree_node_init(INTEGER);
-  tree_node_set_str(value_node, value);
+  NODE *value_node = tree_node_init(VALUE);
+  tree_node_set_value(value_node, value);
 
   if (!strcmp(operation, "*") || !strcmp(operation, "/")) {
     NODE *old_right = most_right_node(root);

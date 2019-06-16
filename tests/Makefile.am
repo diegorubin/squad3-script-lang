@@ -35,6 +35,7 @@ parser_LDADD = ${PARSER_LIBS} \
                ../src/parser.o \
                ../src/sqd3_types.o \
                ../src/tree.o \
+               ../src/vtable.o \
                -lcheck -lsubunit -lm -lrt -lpthread
 
 sqd3_types_CFLAGS = -I/usr/include \
@@ -42,6 +43,7 @@ sqd3_types_CFLAGS = -I/usr/include \
 
 sqd3_types_LDADD = ${SQD3_TYPES_LIBS} \
                    ../src/sqd3_types.o \
+                   ../src/vtable.o \
                    -lcheck -lsubunit -lm -lrt -lpthread
 
 tree_CFLAGS = -I/usr/include \
@@ -50,6 +52,7 @@ tree_CFLAGS = -I/usr/include \
 tree_LDADD = ${TREE_LIBS} \
               ../src/tree.o \
               ../src/sqd3_types.o \
+              ../src/vtable.o \
               -lcheck -lsubunit -lm -lrt -lpthread
 
 vtable_CFLAGS = -I/usr/include \

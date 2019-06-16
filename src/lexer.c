@@ -76,7 +76,8 @@ void ignore_spaces(void) {
 
 token is_valid_char(void) {
   char c = getc(stream);
-  if (c == '(' || c == ')' || c == '+' || c == '-' || c == '*' || c == '/') {
+  if (c == '(' || c == ')' || c == '+' || c == '-' || c == '*' || c == '/' ||
+      c == '=') {
     lexeme[0] = c;
     lexeme[1] = '\0';
     return c;

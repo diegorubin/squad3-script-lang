@@ -7,6 +7,7 @@
 
 #include "consts.h"
 #include "sqd3_types.h"
+#include "vtable.h"
 
 typedef enum {
   NODE_LEFT = 0,
@@ -15,12 +16,13 @@ typedef enum {
 
 typedef enum {
   OPERATOR = 0,
-  INTEGER,
+  VALUE,
 } node_t;
 
 typedef struct NODE {
   node_t nodetype;
-  char value[LEXEME_MAX_SIZE];
+  SQD3_OBJECT *value;
+  operator_t op;
   struct NODE *left;
   struct NODE *right;
   struct NODE *parent;
@@ -31,7 +33,8 @@ void tree_node_free(NODE *node);
 void tree_add(NODE *node, NODE *son, side_t side);
 void print_tree(NODE *node, char *str);
 SQD3_OBJECT *calculate_tree(NODE *node);
-void tree_node_set_str(NODE *node, const char *str);
-NODE *tree_put_operation(NODE *root, const char *operation, const char *value);
+void tree_node_set_value(NODE *node, SQD3_OBJECT *value);
+void tree_node_set_op(NODE *node, operator_t op);
+NODE *tree_put_operation(NODE *root, operator_t operation, SQD3_OBJECT *value);
 
 #endif

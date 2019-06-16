@@ -4,30 +4,27 @@
  * private functions
  */
 bool is_binary_op(token value) {
-  return (value == '+' || value == '-' || value == '*' || value == '/');
+  return (value == '+' || value == '-' || value == '*' || value == '/' ||
+          value == '=');
 }
 
 /**
  * public functions
  */
 SQD3_OBJECT *expr(void) {
-  char number[1024];
-
   SQD3_OBJECT *expr_result = factor();
-  sprintf(number, "%lld", read_integer_from_object(expr_result));
 
-  NODE *expr_root = tree_node_init(INTEGER);
-  tree_node_set_str(expr_root, number);
+  NODE *expr_root = tree_node_init(VALUE);
+  tree_node_set_value(expr_root, expr_result);
 
   while (is_binary_op(get_lookahead())) {
-    char lexeme[2];
-    read_lexeme(lexeme);
+    operator_t op;
+    read_lexeme(op);
+
     match(get_lookahead());
 
     SQD3_OBJECT *partial = factor();
-    sprintf(number, "%lld", read_integer_from_object(partial));
-
-    expr_root = tree_put_operation(expr_root, lexeme, number);
+    expr_root = tree_put_operation(expr_root, op, partial);
   }
 
   SQD3_OBJECT *tree_result = calculate_tree(expr_root);
@@ -70,5 +67,5 @@ SQD3_OBJECT *factor(void) {
   }
 
   match(ID);
-  return integer_from_long_long(0);
+  return build_ref(lexeme);
 }
