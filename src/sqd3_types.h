@@ -12,21 +12,30 @@ typedef enum {
   T_STRING,
 } object_t;
 
+typedef enum {
+  T_BUILTIN_FUNCTION,
+  T_VARIABLE,
+} object_ref_t;
+
 typedef struct SQD3_OBJECT {
   object_t object_type;
   void *value;
 } SQD3_OBJECT;
 
 typedef struct SQD3_OBJECT_REF_VALUE {
+  object_ref_t ref_type;
+  void *ptr;
   varname_t varname;
 } SQD3_OBJECT_REF_VALUE;
 
 SQD3_OBJECT *integer_from_long_long(integer value);
 SQD3_OBJECT *string_from_const_char(const char *value);
 SQD3_OBJECT *build_ref(varname_t varname);
+SQD3_OBJECT *build_builtin_function_ref(varname_t varname, void *function_ptr);
 
 integer read_integer_from_object(SQD3_OBJECT *object);
 const char *read_string_from_object(SQD3_OBJECT *object);
+void *read_function_from_object(SQD3_OBJECT *object);
 
 SQD3_OBJECT *execute_operator_plus(SQD3_OBJECT *left, SQD3_OBJECT *right);
 SQD3_OBJECT *execute_operator_multi(SQD3_OBJECT *left, SQD3_OBJECT *right);

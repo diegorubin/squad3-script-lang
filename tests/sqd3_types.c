@@ -2,6 +2,11 @@
 #include <check.h>
 #include <stdio.h>
 
+/**
+ * Fixture function
+ */
+SQD3_OBJECT *simple_function() { return integer_from_long_long(0); }
+
 START_TEST(test_init_integer) {
   integer *value = malloc(sizeof(integer));
   *value = 1000;
@@ -12,6 +17,22 @@ START_TEST(test_init_integer) {
 
   ck_assert_int_eq(read_integer_from_object(object), 1000);
   ck_assert_int_eq(object->object_type, T_INTEGER);
+
+  free_object(object);
+}
+END_TEST
+
+START_TEST(test_init_function_ref) {
+  integer *value = malloc(sizeof(integer));
+  *value = 1000;
+
+  SQD3_OBJECT *object =
+      build_builtin_function_ref("simple_function", &simple_function);
+
+  free(value);
+
+  ck_assert_ptr_eq(read_function_from_object(object), &simple_function);
+  ck_assert_int_eq(object->object_type, T_REF);
 
   free_object(object);
 }
@@ -81,6 +102,7 @@ Suite *parser_suite(void) {
   suite = suite_create("SQD3 Types");
 
   tcase_add_test(tc_integer, test_init_integer);
+  tcase_add_test(tc_integer, test_init_function_ref);
   tcase_add_test(tc_integer, test_plus_integers);
   tcase_add_test(tc_integer, test_minus_integers);
   tcase_add_test(tc_integer, test_multi_integers);

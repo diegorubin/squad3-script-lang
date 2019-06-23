@@ -8,6 +8,21 @@ bool is_binary_op(token value) {
           value == '=');
 }
 
+SQD3_OBJECT *execute_function(varname_t function_name) {
+  SQD3_OBJECT *(*function)();
+  VTABLE_ENTRY *entry = recover_variable(function_name);
+
+  if (entry == NULL) {
+    fprintf(stderr, "error: function %s not declared\n", function_name);
+    exit(-2);
+  }
+
+  void *function_ref = read_function_from_object(entry->ref);
+  function = function_ref;
+
+  return function();
+}
+
 /**
  * public functions
  */
@@ -67,5 +82,11 @@ SQD3_OBJECT *factor(void) {
   }
 
   match(ID);
+  if (get_lookahead() == START_PARENTHESES) {
+    SQD3_OBJECT *function_result = execute_function(lexeme);
+    match(START_PARENTHESES);
+    match(END_PARENTHESES);
+    return function_result;
+  }
   return build_ref(lexeme);
 }

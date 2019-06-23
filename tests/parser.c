@@ -3,6 +3,11 @@
 
 #include <check.h>
 
+/**
+ * Fixture function
+ */
+SQD3_OBJECT *build1() { return integer_from_long_long(1); }
+
 START_TEST(test_factor_integer) {
   char input[] = "1234";
   FILE *buffer = fmemopen(input, strlen(input), "r");
@@ -193,18 +198,35 @@ START_TEST(test_assign_expression_result) {
 }
 END_TEST
 
+START_TEST(test_builtin_function) {
+  char input[] = "build1() + 1";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+  init_vtable();
+
+  SQD3_OBJECT *ref = build_builtin_function_ref("build1", &build1);
+  declare_local_variable("build1", ref);
+
+  ck_assert_int_eq(read_integer_from_object(expr()), 2);
+
+  fclose(buffer);
+}
+END_TEST
+
 Suite *parser_suite(void) {
   Suite *suite;
   TCase *tc_factor;
   TCase *tc_expr;
   TCase *tc_complex_expr;
   TCase *tc_assgn_expr;
+  TCase *tc_function_call;
 
   suite = suite_create("Parser");
   tc_factor = tcase_create("factor");
   tc_expr = tcase_create("expr");
-  tc_complex_expr = tcase_create("complex_expr");
-  tc_assgn_expr = tcase_create("assgn_expr");
+  tc_complex_expr = tcase_create("complex expr");
+  tc_assgn_expr = tcase_create("assgn expr");
+  tc_function_call = tcase_create("function call");
 
   tcase_add_test(tc_factor, test_factor_integer);
   tcase_add_test(tc_factor, test_factor_id);
@@ -227,10 +249,13 @@ Suite *parser_suite(void) {
   tcase_add_test(tc_assgn_expr, test_assign_variable);
   tcase_add_test(tc_assgn_expr, test_assign_expression_result);
 
+  tcase_add_test(tc_function_call, test_builtin_function);
+
   suite_add_tcase(suite, tc_factor);
   suite_add_tcase(suite, tc_expr);
   suite_add_tcase(suite, tc_complex_expr);
   suite_add_tcase(suite, tc_assgn_expr);
+  suite_add_tcase(suite, tc_function_call);
 
   return suite;
 }
