@@ -26,6 +26,16 @@ SQD3_OBJECT *execute_function(varname_t function_name) {
 /**
  * public functions
  */
+void expr_list(void) {
+  for (;;) {
+    SQD3_OBJECT *result = expr();
+    declare_local_variable("", result);
+    if (get_lookahead() != COMMA)
+      return;
+    match(COMMA);
+  }
+}
+
 SQD3_OBJECT *expr(void) {
   SQD3_OBJECT *expr_result = factor();
 
@@ -83,9 +93,18 @@ SQD3_OBJECT *factor(void) {
 
   match(ID);
   if (get_lookahead() == START_PARENTHESES) {
-    SQD3_OBJECT *function_result = execute_function(lexeme);
+    init_context(lexeme);
+
     match(START_PARENTHESES);
+    if (get_lookahead() != END_PARENTHESES) {
+      expr_list();
+    }
     match(END_PARENTHESES);
+
+    SQD3_OBJECT *function_result = execute_function(lexeme);
+    dispose_local_variables();
+    finish_context();
+
     return function_result;
   }
   return build_ref(lexeme);

@@ -23,7 +23,9 @@ typedef struct VTABLE_ENTRY {
 
 void init_vtable(void);
 void init_context(varname_t context_name);
+void finish_context(void);
 VTABLE_ENTRY *declare_local_variable(varname_t varname, SQD3_OBJECT *value);
+SQD3_OBJECT *recover_from_stack_args(int pos);
 void dispose_local_variables();
 
 SQD3_OBJECT *execute_operator_assign(SQD3_OBJECT *left, SQD3_OBJECT *right);

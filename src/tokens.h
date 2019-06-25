@@ -6,6 +6,7 @@ typedef int token;
 enum {
   START_PARENTHESES = 40,
   END_PARENTHESES,
+  COMMA = 44,
 
   UINT = 255,
   FLOAT,

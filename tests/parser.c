@@ -8,6 +8,12 @@
  */
 SQD3_OBJECT *build1() { return integer_from_long_long(1); }
 
+SQD3_OBJECT *soma() {
+  SQD3_OBJECT *left = recover_from_stack_args(1);
+  SQD3_OBJECT *right = recover_from_stack_args(0);
+  return execute_operator_plus(left, right);
+}
+
 START_TEST(test_factor_integer) {
   char input[] = "1234";
   FILE *buffer = fmemopen(input, strlen(input), "r");
@@ -213,6 +219,21 @@ START_TEST(test_builtin_function) {
 }
 END_TEST
 
+START_TEST(test_builtin_function_with_parameters) {
+  char input[] = "soma(1, 2)";
+  FILE *buffer = fmemopen(input, strlen(input), "r");
+  init_lexer(buffer);
+  init_vtable();
+
+  SQD3_OBJECT *ref = build_builtin_function_ref("soma", &soma);
+  declare_local_variable("soma", ref);
+
+  ck_assert_int_eq(read_integer_from_object(expr()), 3);
+
+  fclose(buffer);
+}
+END_TEST
+
 Suite *parser_suite(void) {
   Suite *suite;
   TCase *tc_factor;
@@ -250,6 +271,7 @@ Suite *parser_suite(void) {
   tcase_add_test(tc_assgn_expr, test_assign_expression_result);
 
   tcase_add_test(tc_function_call, test_builtin_function);
+  tcase_add_test(tc_function_call, test_builtin_function_with_parameters);
 
   suite_add_tcase(suite, tc_factor);
   suite_add_tcase(suite, tc_expr);
