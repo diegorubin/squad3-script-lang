@@ -13,5 +13,3 @@ sqd3_SOURCES = lexer.c \
                builtin_functions.c \
                debug.c \
                main.c
-
-

@@ -77,6 +77,12 @@ tests/Makefile
 .deps
 *.trs
 .dirstamp
+m4
+ltmain.sh
+libtool
+config.guess
+config.sub
+lib/.libs
 
 # IDE files
 .idea/
